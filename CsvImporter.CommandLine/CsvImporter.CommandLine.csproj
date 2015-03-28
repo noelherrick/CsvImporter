@@ -3,10 +3,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProjectGuid>{C493B352-0657-4638-BBAD-78D984830161}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <RootNamespace>CsvImporter</RootNamespace>
-    <AssemblyName>CsvImporter</AssemblyName>
+    <ProjectGuid>{9E0329BA-592E-4B5E-836E-3F50A5A13AD0}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>CsvImporter.CommandLine</RootNamespace>
+    <AssemblyName>CsvImporter.CommandLine</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -19,6 +19,7 @@
     <WarningLevel>4</WarningLevel>
     <Externalconsole>true</Externalconsole>
     <PlatformTarget>x86</PlatformTarget>
+    <Commandlineparameters>--help</Commandlineparameters>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>full</DebugType>
@@ -31,53 +32,42 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="CsvHelper">
-      <HintPath>..\packages\CsvHelper.2.6.1\lib\net40-client\CsvHelper.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.C5" />
-    <Reference Include="Mono.Security">
-      <HintPath>..\packages\Npgsql.2.2.5\lib\net45\Mono.Security.dll</HintPath>
-    </Reference>
-    <Reference Include="Npgsql">
-      <HintPath>..\packages\Npgsql.2.2.5\lib\net45\Npgsql.dll</HintPath>
+    <Reference Include="CommandLine">
+      <HintPath>..\packages\CommandLineParser.1.9.71\lib\net45\CommandLine.dll</HintPath>
     </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="Npgsql" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PostgresDestination.cs" />
-    <Compile Include="SqlTypes\SqlType.cs" />
-    <Compile Include="SqlTypes\TypeCategory.cs" />
-    <Compile Include="SqlTypes\Char.cs" />
-    <Compile Include="SqlTypes\Int.cs" />
-    <Compile Include="SqlTypes\Date.cs" />
-    <Compile Include="SqlTypes\Decimal.cs" />
-    <Compile Include="Configuration\DestinationConfiguration.cs" />
-    <Compile Include="Configuration\SourceConfiguration.cs" />
-    <Compile Include="Configuration\PostgresConfiguration.cs" />
-    <Compile Include="CsvSource.cs" />
-    <Compile Include="Configuration\CsvFileConfiguration.cs" />
-    <Compile Include="Helpers\Zipper.cs" />
-    <Compile Include="TypedTable.cs" />
-    <Compile Include="Helpers\PostgresNaming.cs" />
-    <Compile Include="Helpers\PostgresTypedTableExtensions.cs" />
+    <Compile Include="Arguments.cs" />
+    <Compile Include="Controller.cs" />
+    <Compile Include="UserInputException.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="README.md" />
     <None Include="LICENSE" />
+    <None Include="README.md" />
     <None Include="COPYRIGHT" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="SqlTypes\" />
-    <Folder Include="Configuration\" />
-    <Folder Include="Helpers\" />
-  </ItemGroup>
-  <ItemGroup>
+    <ProjectReference Include="..\CsvImporter\CsvImporter.csproj">
+      <Project>{C493B352-0657-4638-BBAD-78D984830161}</Project>
+      <Name>CsvImporter</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SimpleTable\SimpleTable.csproj">
       <Project>{EA7E1F5A-638F-4F09-AAB4-110EDF1E2A75}</Project>
       <Name>SimpleTable</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="test1.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="test2.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 </Project>

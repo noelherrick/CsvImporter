@@ -3,18 +3,42 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsvImporter", "CsvImporter\CsvImporter.csproj", "{C493B352-0657-4638-BBAD-78D984830161}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsvImporter.CommandLine", "CsvImporter.CommandLine\CsvImporter.CommandLine.csproj", "{9E0329BA-592E-4B5E-836E-3F50A5A13AD0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsvImporter.Tests", "CsvImporter.Tests\CsvImporter.Tests.csproj", "{9CD2947D-2CC6-4FB4-9207-841F68ADFAFC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleTable", "SimpleTable\SimpleTable.csproj", "{EA7E1F5A-638F-4F09-AAB4-110EDF1E2A75}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsvImporter.CommandLine.Tests", "CsvImporter.CommandLine.Tests\CsvImporter.CommandLine.Tests.csproj", "{A54F4098-226B-4158-BB82-376FF68A0C74}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9CD2947D-2CC6-4FB4-9207-841F68ADFAFC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9CD2947D-2CC6-4FB4-9207-841F68ADFAFC}.Debug|x86.Build.0 = Debug|Any CPU
+		{9CD2947D-2CC6-4FB4-9207-841F68ADFAFC}.Release|x86.ActiveCfg = Release|Any CPU
+		{9CD2947D-2CC6-4FB4-9207-841F68ADFAFC}.Release|x86.Build.0 = Release|Any CPU
+		{9E0329BA-592E-4B5E-836E-3F50A5A13AD0}.Debug|x86.ActiveCfg = Debug|x86
+		{9E0329BA-592E-4B5E-836E-3F50A5A13AD0}.Debug|x86.Build.0 = Debug|x86
+		{9E0329BA-592E-4B5E-836E-3F50A5A13AD0}.Release|x86.ActiveCfg = Release|x86
+		{9E0329BA-592E-4B5E-836E-3F50A5A13AD0}.Release|x86.Build.0 = Release|x86
+		{A54F4098-226B-4158-BB82-376FF68A0C74}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A54F4098-226B-4158-BB82-376FF68A0C74}.Debug|x86.Build.0 = Debug|Any CPU
+		{A54F4098-226B-4158-BB82-376FF68A0C74}.Release|x86.ActiveCfg = Release|Any CPU
+		{A54F4098-226B-4158-BB82-376FF68A0C74}.Release|x86.Build.0 = Release|Any CPU
 		{C493B352-0657-4638-BBAD-78D984830161}.Debug|x86.ActiveCfg = Debug|x86
 		{C493B352-0657-4638-BBAD-78D984830161}.Debug|x86.Build.0 = Debug|x86
 		{C493B352-0657-4638-BBAD-78D984830161}.Release|x86.ActiveCfg = Release|x86
 		{C493B352-0657-4638-BBAD-78D984830161}.Release|x86.Build.0 = Release|x86
+		{EA7E1F5A-638F-4F09-AAB4-110EDF1E2A75}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{EA7E1F5A-638F-4F09-AAB4-110EDF1E2A75}.Debug|x86.Build.0 = Debug|Any CPU
+		{EA7E1F5A-638F-4F09-AAB4-110EDF1E2A75}.Release|x86.ActiveCfg = Release|Any CPU
+		{EA7E1F5A-638F-4F09-AAB4-110EDF1E2A75}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = CsvImporter\CsvImporter.csproj
+		StartupItem = CsvImporter.CommandLine\CsvImporter.CommandLine.csproj
 	EndGlobalSection
 EndGlobal
