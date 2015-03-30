@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace SimpleTable
 {
+	/// <summary>
+	/// Represents a table.
+	/// </summary>
 	public class Table : List<Row>
 	{
 		private Dictionary<string, int> columnNameIndex = new Dictionary<string, int>();

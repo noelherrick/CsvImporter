@@ -6,16 +6,31 @@ using System.Linq;
 
 namespace CsvImporter.CommandLine
 {
+	/// <summary>
+	/// The class that helps to controll the CommandLine tool.
+	/// </summary>
 	public class Controller
 	{
 		private static CommandLineLib.Parser parser;
+		private ReadTableFunc readTable;
+		private WriteTableFunc writeTable; 
 
-		public delegate void WriteTableFunc (DestinationConfiguration destConfig, PostgresConfiguration pgConfig, TypedTable table);
+		/// <summary>
+		/// The type for a function that reads a table. A simple form of dependancy injection.
+		/// </summary>
 		public delegate TypedTable ReadTableFunc (SourceConfiguration srcConfig, CsvFileConfiguration csvConfig);
 
-		private WriteTableFunc writeTable; 
-		private ReadTableFunc readTable;
+		/// <summary>
+		/// The type for a function that writes a table. A simple form of dependancy injection.
+		/// </summary>
+		public delegate void WriteTableFunc (DestinationConfiguration destConfig, PostgresConfiguration pgConfig, TypedTable table);
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="CsvImporter.CommandLine.Controller"/> class.
+		/// </summary>
+		/// <param name="commandLineTextWriter">Command line text writer.</param>
+		/// <param name="readTable">A function that writes a table.</param>
+		/// <param name="writeTable">A function that writes a table.</param>
 		public Controller (TextWriter commandLineTextWriter,  ReadTableFunc readTable, WriteTableFunc writeTable)
 		{
 			parser = new CommandLineLib.Parser (with => {
@@ -28,12 +43,20 @@ namespace CsvImporter.CommandLine
 
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="CsvImporter.CommandLine.Controller"/> class with default source and destination.
+		/// </summary>
+		/// <param name="commandLineTextWriter">Command line text writer.</param>
 		public Controller (TextWriter commandLineTextWriter)
 			: this (commandLineTextWriter, ReadTableDefault, WriteTableDefault)
 		{
 
 		}
 
+		/// <summary>
+		/// Runs the program with the specified args.
+		/// </summary>
+		/// <param name="args">Arguments.</param>
 		public string Run (string[] args)
 		{
 			// Why the manual parsing?
@@ -93,12 +116,24 @@ namespace CsvImporter.CommandLine
 			return "";
 		}
 
+		/// <summary>
+		/// The default ReadTable function, namely, a CSV file source.
+		/// </summary>
+		/// <returns>The table that was read in.</returns>
+		/// <param name="srcConfig">Source config.</param>
+		/// <param name="csvConfig">Csv config.</param>
 		public static TypedTable ReadTableDefault (SourceConfiguration srcConfig, CsvFileConfiguration csvConfig)
 		{
 			var src = new CsvFileSource (csvConfig, srcConfig);
 			return src.ReadTable ();
 		}
 
+		/// <summary>
+		/// Writes the table to the default destination, namely a Postgres table.
+		/// </summary>
+		/// <param name="destConfig">Destination config.</param>
+		/// <param name="pgConfig">Postgres-specific config.</param>
+		/// <param name="table">Table to write.</param>
 		public static void WriteTableDefault (DestinationConfiguration destConfig, PostgresConfiguration pgConfig, TypedTable table)
 		{
 			var dest = new PostgresDestination (destConfig, pgConfig);

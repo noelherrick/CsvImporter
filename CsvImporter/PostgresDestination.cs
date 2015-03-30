@@ -5,17 +5,29 @@ using Npgsql;
 
 namespace CsvImporter
 {
+	/// <summary>
+	/// The Postgres destination. Creates or truncates tables and inserts data.
+	/// </summary>
     public class PostgresDestination
     {
         private DestinationConfiguration config;
         private PostgresConfiguration pgConfig;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="CsvImporter.PostgresDestination"/> class.
+		/// </summary>
+		/// <param name="config">Config.</param>
+		/// <param name="pgConfig">Postgres-specific config.</param>
         public PostgresDestination (DestinationConfiguration config, PostgresConfiguration pgConfig)
         {
             this.config = config;
             this.pgConfig = pgConfig;
         }
 
+		/// <summary>
+		/// Writes the table to the destination database. It will also create or truncate the table.
+		/// </summary>
+		/// <param name="table">Table.</param>
         public void WriteTable (TypedTable table)
         {
 			table = table.AsPostgresTable ();

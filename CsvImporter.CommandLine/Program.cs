@@ -5,9 +5,19 @@ using Npgsql;
 
 namespace CsvImporter.CommandLine
 {
+	/// <summary>
+	/// The main class for the CommandLine function.
+	/// </summary>
     public class Program
     {
+		/// <summary>
+		/// The writer to send errors to. Defaults to standard error.
+		/// </summary>
 		public static TextWriter ErrorWriter = Console.Error;
+
+		/// <summary>
+		/// The writer to send output to. Defaults to standard out.
+		/// </summary>
 		public static TextWriter OutWriter = Console.Out;
 
 		private static void errorPrinter (Exception exp, bool verbose) {
@@ -21,6 +31,11 @@ namespace CsvImporter.CommandLine
 			}
 		}
 
+		/// <summary>
+		/// The entry point of the program, where the program control starts and ends.
+		/// </summary>
+		/// <param name="args">The command-line arguments.</param>
+		/// <returns>The exit code that is given to the operating system after the program ends.</returns>
         public static int Main (string[] args)
         {
 			var controller = new Controller (ErrorWriter);

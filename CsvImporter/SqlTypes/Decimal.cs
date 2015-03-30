@@ -2,14 +2,29 @@
 
 namespace CsvImporter.SqlTypes
 {
+	/// <summary>
+	/// The Decimal SQL type.
+	/// </summary>
     public class Decimal : SqlType
     {
+		/// <summary>
+		/// Initializes a new instance of the <see cref="CsvImporter.SqlTypes.Decimal"/> class.
+		/// </summary>
         public Decimal ()
         {
             TypeCategory = TypeCategory.DECIMAL;
         }
 
+		/// <summary>
+		/// Gets or sets total length for the decimal (the total number of digits)
+		/// </summary>
+		/// <value>The width.</value>
         public int Width { get; set; }
+
+		/// <summary>
+		/// Gets or sets number of digits to the right of the decimal point.
+		/// </summary>
+		/// <value>The number of digitis to the right of the decimal point.</value>
         public int RightOfPoint { get; set; }
 
         protected override SqlType GetBroadestTypeWithinCategory (SqlType otherType)

@@ -2,8 +2,10 @@
 
 namespace CsvImporter.SqlTypes
 {
-    // Lower numbers mean a broader category
-    public enum TypeCategory
+    /// <summary>
+	/// Type category for SQL data types. Lower numbers mean a broader category
+    /// </summary>
+	public enum TypeCategory
     {
         CHAR,
         DATE,

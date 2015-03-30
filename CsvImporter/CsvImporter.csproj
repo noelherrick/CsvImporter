@@ -68,6 +68,7 @@
     <None Include="README.md" />
     <None Include="LICENSE" />
     <None Include="COPYRIGHT" />
+    <None Include="TODO" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="SqlTypes\" />

@@ -6,16 +6,31 @@ using System.Collections.Generic;
 
 namespace CsvImporter
 {
+	/// <summary>
+	/// The interface that every source must implement.
+	/// </summary>
     public interface ISource
     {
+		/// <summary>
+		/// Reads the underlying source, producing a TypedTable instance.
+		/// </summary>
+		/// <returns>The table.</returns>
         TypedTable ReadTable ();
     }
 
+	/// <summary>
+	/// A CSV-file source.
+	/// </summary>
     public class CsvFileSource : ISource
     {
         private CsvFileConfiguration fileConfig;
         private SourceConfiguration srcConfig;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="CsvImporter.CsvFileSource"/> class.
+		/// </summary>
+		/// <param name="fileConfig">File config.</param>
+		/// <param name="srcConfig">Source config.</param>
         public CsvFileSource (CsvFileConfiguration fileConfig, SourceConfiguration srcConfig)
         {
             // If a name wasn't passed in, use the filename without extension
@@ -36,11 +51,19 @@ namespace CsvImporter
         }
     }
 
+	/// <summary>
+	/// A generic CSV source. Parses CSV from any TextReader into a TypedTable.
+	/// </summary>
     public class CsvSource : ISource
     {
         private SourceConfiguration config;
         private TextReader reader;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="CsvImporter.CsvSource"/> class.
+		/// </summary>
+		/// <param name="reader">Reader for the underlying data source</param>
+		/// <param name="config">Config.</param>
         public CsvSource (TextReader reader, SourceConfiguration config)
         {
             this.config = config;
