@@ -50,7 +50,6 @@
     <Compile Include="SqlTypes\TypeCategory.cs" />
     <Compile Include="SqlTypes\Char.cs" />
     <Compile Include="SqlTypes\Int.cs" />
-    <Compile Include="SqlTypes\Date.cs" />
     <Compile Include="SqlTypes\Decimal.cs" />
     <Compile Include="Configuration\DestinationConfiguration.cs" />
     <Compile Include="Configuration\SourceConfiguration.cs" />
@@ -61,6 +60,7 @@
     <Compile Include="TypedTable.cs" />
     <Compile Include="Helpers\PostgresNaming.cs" />
     <Compile Include="Helpers\PostgresTypedTableExtensions.cs" />
+    <Compile Include="SqlTypes\TimeTypes.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

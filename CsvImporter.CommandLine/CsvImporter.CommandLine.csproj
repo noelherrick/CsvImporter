@@ -6,7 +6,7 @@
     <ProjectGuid>{9E0329BA-592E-4B5E-836E-3F50A5A13AD0}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>CsvImporter.CommandLine</RootNamespace>
-    <AssemblyName>CsvImporter.CommandLine</AssemblyName>
+    <AssemblyName>csv-importer</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">

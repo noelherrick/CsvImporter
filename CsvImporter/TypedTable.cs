@@ -80,12 +80,16 @@ namespace CsvImporter
 
 		private Regex intRegex = new Regex(@"^-?\d+$");
 		private Regex decimalRegex = new Regex(@"^-?([0-9]+)\.([0-9]+)$");
-		private Regex dateRegex = new Regex (@"^([\+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T\s]((([01]\d|2[0-3])((:?)[0-5]\d)?|24\:?00)([\.,]\d+(?!:))?)?(\17[0-5]\d([\.,]\d+)?)?([zZ]|([\+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?$");
+		private Regex dateRegex = new Regex(@"^(?<year>[0-9]{4})-?(?<month>1[0-2]|0[1-9])-?(?<day>3[01]|0[1-9]|[12][0-9])$");
+		private Regex timeRegex = new Regex (@"^(2[0-3]|[01][0-9]):?([0-5][0-9]):?([0-5][0-9])$");
+		private Regex timezRegex = new Regex(@"^(?<hour>2[0-3]|[01][0-9]):?(?<minute>[0-5][0-9]):?(?<second>[0-5][0-9])(?<timezone>Z|[+-](?:2[0-3]|[01][0-9])(?::?(?:[0-5][0-9]))?)$");
+		private Regex timestampRegex = new Regex (@"^(?<year>[0-9]{4})-?(?<month>1[0-2]|0[1-9])-?(?<day>3[01]|0[1-9]|[12][0-9]) (?<hour>2[0-3]|[01][0-9]):?(?<minute>[0-5][0-9]):?(?<second>[0-5][0-9])$");
+		private Regex timestampzRegex = new Regex (@"^([\+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T\s]((([01]\d|2[0-3])((:?)[0-5]\d)?|24\:?00)([\.,]\d+(?!:))?)?(\17[0-5]\d([\.,]\d+)?)?([zZ]|([\+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?$");
 
 		// TODO: Decide whether this logic is best in another class. Hiding all the logic behind a property is strange
         private SqlType getCellDataType(string cell)
         {
-            // TODO: We need more sophisticated DATETIME parsing. I assume .NET  has a standard format. We should try some of the most common.
+			// TODO: If the type is later converted to a string, we need to know the length of all the previous data
             // TODO: We also need to talk about warnings. Of course, some cells are actually strings, but perhaps there should be warnings on type errors.
 			MatchCollection matches;
 
@@ -98,6 +102,14 @@ namespace CsvImporter
 				return new SqlTypes.Decimal () { Width = width, RightOfPoint = rightOfPoint };
 			} else if (dateRegex.IsMatch(cell)) {
 				return new SqlTypes.Date();
+			} else if (timeRegex.IsMatch(cell)) {
+				return new SqlTypes.Time();
+			} else if (timezRegex.IsMatch(cell)) {
+				return new SqlTypes.Timez();
+			} else if (timestampRegex.IsMatch(cell)) {
+				return new SqlTypes.Timestamp();
+			} else if (timestampzRegex.IsMatch(cell)) {
+				return new SqlTypes.Timestampz();
 			} else {
 				return new SqlTypes.Char() { Width = cell.Length };
             }

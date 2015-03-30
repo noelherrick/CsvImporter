@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CsvImporter.SqlTypes
 {
@@ -28,19 +30,43 @@ namespace CsvImporter.SqlTypes
 		/// <param name="otherType">Other type to compare this to.</param>
         public SqlType GetBroadestType (SqlType otherType)
         {
-            if (this.TypeCategory < otherType.TypeCategory)
-            {
-                return this;
-            }
-            else if (this.TypeCategory > otherType.TypeCategory)
-            {
-                return otherType;
-            }
-            else
-            {
-                return GetBroadestTypeWithinCategory(otherType);
-            }
+			if (this.TypeCategory == otherType.TypeCategory)
+			{
+				return GetBroadestTypeWithinCategory(otherType);
+			}
+
+			var narrowerType = this.TypeCategory < otherType.TypeCategory ? this.GetType() : otherType.GetType();
+			var broaderType = this.TypeCategory > otherType.TypeCategory ? this.GetType() : otherType.GetType();
+
+			if (compatibleTypes.ContainsKey(narrowerType))
+			{
+				if (compatibleTypes[narrowerType].Contains(broaderType))
+				{
+					return (SqlType)Activator.CreateInstance(broaderType);
+				}
+
+				var intersection = compatibleTypes [narrowerType].Intersect (compatibleTypes [broaderType]);
+
+				if (intersection.Any())
+				{
+					var firstType = intersection.First ();
+
+					return (SqlType)Activator.CreateInstance(firstType);
+				}
+			}
+
+			return new SqlTypes.Char () { Width = int.MaxValue };
         }
+
+		// Char or string is implicit
+		private Dictionary<Type, IList<Type>> compatibleTypes
+		= new Dictionary<Type, IList<Type>> () {
+			{ typeof(SqlTypes.Int), new List<Type> () { typeof(SqlTypes.Decimal) } },
+			{ typeof(SqlTypes.Decimal), new List<Type> () { typeof(SqlTypes.Timez), typeof(SqlTypes.Timestamp), typeof(SqlTypes.Timestampz) } },
+			{ typeof(SqlTypes.Time), new List<Type> () { typeof(SqlTypes.Timestamp), typeof(SqlTypes.Timestampz) } },
+			{ typeof(SqlTypes.Date), new List<Type> () { typeof(SqlTypes.Timestamp), typeof(SqlTypes.Timestampz) } },
+			{ typeof(SqlTypes.Timestamp), new List<Type> () { typeof(SqlTypes.Timestampz) } },
+		};
     }
 }
 

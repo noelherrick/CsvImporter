@@ -79,7 +79,7 @@ namespace CsvImporter.CommandLine
 
 			parser.ParseArguments (args, options);
 
-			if (options.LastParserState != null && options.LastParserState.Errors.Count > 0)
+			if (options.LastParserState != null && options.LastParserState.Errors.Any())
 			{
 				var sb = new StringBuilder();
 

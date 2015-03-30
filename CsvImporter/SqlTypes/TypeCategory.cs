@@ -8,11 +8,13 @@ namespace CsvImporter.SqlTypes
 	public enum TypeCategory
     {
         CHAR,
+		TIMESTAMPZ,
+		TIMESTAMP,
         DATE,
+		TIMEZ,
         TIME,
         DECIMAL,
         INTEGER
-
     }
 }
 

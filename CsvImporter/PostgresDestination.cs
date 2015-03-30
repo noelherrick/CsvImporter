@@ -90,17 +90,21 @@ namespace CsvImporter
             var category = type.TypeCategory;
 
             if (category == TypeCategory.DECIMAL) {
-                // TODO: We need to see what kind of decimal it is - this might complicate the data type dectection
                 var dec = type as SqlTypes.Decimal;
                 return string.Format("decimal({0},{1})", dec.Width, dec.RightOfPoint);
             } else if (category == TypeCategory.INTEGER) {
                 return "integer";
-                // TODO: Need to get better mapping for dates & times
             } else if (category == TypeCategory.DATE) {
                 return "date";
             } else if (category == TypeCategory.TIME) {
                 return "time";
-            } else {
+            } else if (category == TypeCategory.TIMEZ) {
+				return "timez";
+			} else if (category == TypeCategory.TIMESTAMP) {
+				return "timestamp";
+			} else if (category == TypeCategory.TIMESTAMPZ) {
+				return "timestampz";
+			} else {
                 return "text";
             }
         }

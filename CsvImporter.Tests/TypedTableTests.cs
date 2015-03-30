@@ -19,6 +19,46 @@ namespace CsvImporter.Tests
 		}
 
 		[Test()]
+		public void TestThatTimezOffsetIsDetected ()
+		{
+			var table = new TypedTable (new string[] {"a"});
+
+			table.Add(new string[] {"00:00:01-07:00"});
+
+			Assert.IsTrue(table.Headers.First().Type is SqlTypes.Timez);
+		}
+
+		[Test()]
+		public void TestThatTimezZuluIsDetected ()
+		{
+			var table = new TypedTable (new string[] {"a"});
+
+			table.Add(new string[] {"00:00:01Z"});
+
+			Assert.IsTrue(table.Headers.First().Type is SqlTypes.Timez);
+		}
+
+		[Test()]
+		public void TestThatTimestampzOffsetIsDetected ()
+		{
+			var table = new TypedTable (new string[] {"a"});
+
+			table.Add(new string[] {"1970-01-01 00:00:01+09:00"});
+
+			Assert.IsTrue(table.Headers.First().Type is SqlTypes.Timestampz);
+		}
+
+		[Test()]
+		public void TestThatTimestampzZuluIsDetected ()
+		{
+			var table = new TypedTable (new string[] {"a"});
+
+			table.Add(new string[] {"1970-01-01 00:00:01Z"});
+
+			Assert.IsTrue(table.Headers.First().Type is SqlTypes.Timestampz);
+		}
+
+		[Test()]
 		public void TestThatDateIsNotDetectedForBadDate ()
 		{
 			var table = new TypedTable (new string[] {"a"});
@@ -30,23 +70,25 @@ namespace CsvImporter.Tests
 		}
 
 		[Test()]
-		public void TestThatDateTimeIsDetected ()
+		public void TestThatTimestampIsDetected ()
 		{
 			var table = new TypedTable (new string[] {"a"});
 
 			table.Add(new string[] {"1970-01-01 00:00:01"});
 
-			Assert.IsTrue(table.Headers.First().Type is SqlTypes.Date);
+			var type = table.Headers.First ().Type;
+
+			Assert.IsTrue(table.Headers.First().Type is SqlTypes.Timestamp);
 		}
 
 		[Test()]
-		public void TestThatDateTimeIsNotDetectedForBadDateTime ()
+		public void TestThatTimestampIsNotDetectedForBadDateTime ()
 		{
 			var table = new TypedTable (new string[] {"a"});
 
 			table.Add(new string[] {"1970-01-01 00:00:61"});
 
-			Assert.IsFalse(table.Headers.First().Type is SqlTypes.Date);
+			Assert.IsFalse(table.Headers.First().Type is SqlTypes.Timestamp);
 			Assert.IsTrue(table.Headers.First().Type is SqlTypes.Char);
 		}
 
