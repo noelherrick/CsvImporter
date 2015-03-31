@@ -38,7 +38,7 @@ namespace CsvImporter.CommandLine.Tests
 			int exitCode = Program.Main (args);
 
 			Assert.AreEqual (0, exitCode);
-			Assert.AreNotEqual(-1, outWriter.ToString().IndexOf("CsvImporter"));
+			Assert.AreNotEqual(-1, outWriter.ToString().IndexOf("csv-importer"));
 			Assert.AreEqual("", errorWriter.ToString());
 		}
 
@@ -50,7 +50,7 @@ namespace CsvImporter.CommandLine.Tests
 			int exitCode = Program.Main (args);
 
 			Assert.AreEqual (0, exitCode);
-			Assert.AreNotEqual(-1, outWriter.ToString().IndexOf("CsvImporter"));
+			Assert.AreNotEqual(-1, outWriter.ToString().IndexOf("csv-importer"));
 			Assert.AreEqual("", errorWriter.ToString());
 		}
 

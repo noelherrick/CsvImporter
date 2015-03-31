@@ -13,7 +13,7 @@ namespace CsvImporter.CommandLine.Tests
 	{
 		private TextWriter outWriter;
 
-		private void noOpWriteTable (DestinationConfiguration destConfig, PostgresConfiguration pgConfig, TypedTable table)
+		private void noOpWriteTable (DestinationConfiguration destConfig, DbConfiguration pgConfig, TypedTable table)
 		{
 		}
 

@@ -43,8 +43,10 @@
   <ItemGroup>
     <Compile Include="SqlDataTypeTests.cs" />
     <Compile Include="CsvSourceTests.cs" />
-    <Compile Include="PostgresDestinationTests.cs" />
     <Compile Include="TypedTableTests.cs" />
+    <Compile Include="DbAdapterTests.cs" />
+    <Compile Include="PostgresAdapterTests.cs" />
+    <Compile Include="MySqlAdapterTests.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

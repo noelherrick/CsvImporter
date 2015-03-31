@@ -13,15 +13,14 @@ namespace CsvImporter.CommandLine
 	public class Arguments {
 		private static readonly string SUMMARY =
 			@"The CsvImporter tool takes CSV and imports them into a SQL database.";
-
-
+			
 		/// <summary>
 		/// Gets or sets the destination database host.
 		/// </summary>
 		/// <value>The host.</value>
 		[CommandLineLib.Option('h', "host", DefaultValue = "127.0.0.1",
 			HelpText = "The database server.")]
-		public string Host { get; set; }
+		public string Hostname { get; set; }
 
 		/// <summary>
 		/// Gets or sets the destination database port.
@@ -45,7 +44,7 @@ namespace CsvImporter.CommandLine
 		/// <value>The user.</value>
 		[CommandLineLib.Option('u', "user", Required = true,
 			HelpText = "The database user.")]
-		public string User { get; set; }
+		public string Username { get; set; }
 
 		/// <summary>
 		/// Gets or sets the destination database password.
@@ -59,7 +58,7 @@ namespace CsvImporter.CommandLine
 		/// Gets or sets the destination database engine.
 		/// </summary>
 		/// <value>The engine.</value>
-		[CommandLineLib.Option('e', "engine",
+		[CommandLineLib.Option('e', "engine", DefaultValue = "postgres",
 			HelpText = "The database engine (oracle, mysql, postgres, sqlserver, sqlite).")]
 		public string Engine { get; set; }
 

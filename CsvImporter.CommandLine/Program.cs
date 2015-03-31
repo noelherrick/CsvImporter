@@ -2,6 +2,7 @@
 using System.IO;
 using System.Data;
 using Npgsql;
+using MySql.Data.MySqlClient;
 
 namespace CsvImporter.CommandLine
 {
@@ -76,6 +77,12 @@ namespace CsvImporter.CommandLine
 			{
 				ErrorWriter.WriteLine ("There was an error with the database.");
 				ErrorWriter.WriteLine (de.Message);
+				retVal = 3;
+			}
+			catch (MySqlException me)
+			{
+				ErrorWriter.WriteLine ("There was an error with the database.");
+				ErrorWriter.WriteLine (me.Message);
 				retVal = 3;
 			}
 			catch (Exception e)

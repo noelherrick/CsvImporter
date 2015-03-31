@@ -55,7 +55,7 @@ namespace CsvImporter.SqlTypes
 				}
 			}
 
-			return new SqlTypes.Char () { Width = int.MaxValue };
+			return new SqlTypes.Char () { Width = 8000 };
         }
 
 		// Char or string is implicit

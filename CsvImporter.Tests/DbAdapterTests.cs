@@ -1,49 +1,56 @@
-﻿using NUnit.Framework;
-using System;
-using System.Configuration;
-using Npgsql;
+﻿using System;
 using System.Linq;
-using Dapper;
+using CsvImporter;
 using CsvImporter.SqlTypes;
+using Dapper;
+using System.Configuration;
+using System.Data.Common;
+using NUnit.Framework;
 
 namespace CsvImporter.Tests
 {
-	[TestFixture ()]
-	public class PostgresDestinationTests
+	/// <summary>
+	/// Tests for all DB adapters. Not an actual test suite (it lack annotations).
+	/// </summary>
+	public class DbAdapterTests : IDisposable
 	{
-		private NpgsqlConnection conn;
-		private string connString;
-
-		[TestFixtureSetUp()]
-		public void TestFixtureSetUp ()
-		{
-			var appSettings = ConfigurationManager.AppSettings;
-
-			connString = appSettings ["csv_importer"];
-
-			conn = new NpgsqlConnection (connString);
-		}
-
-		[TestFixtureTearDown()]
-		public void TestFixtureTearDown()
+		public void Dispose ()
 		{
 			conn.Close ();
 		}
 
-		[Test()]
+		private DbConnection conn;
+		private IDbAdapter adapter;
+		private DbConfiguration dbConfig;
+
+		public DbAdapterTests (string engine)
+		{
+			adapter = DbAdapterFactory.GetDbAdapter(engine);
+
+			var appSettings = ConfigurationManager.AppSettings;
+
+			var hostname = appSettings [engine+"_hostname"];
+			var database = appSettings [engine+"_database"];
+			var username = appSettings [engine+"_username"];
+			var password = appSettings [engine+"_password"];
+
+			dbConfig = new DbConfiguration () { Engine = engine, Hostname = hostname, Database = database, Username = username, Password = password };
+
+			conn = adapter.GetConnection (dbConfig);
+		}
+
 		public void TestTableIsCreated ()
 		{
 			var types = new SqlType[] { new SqlTypes.Char (), new SqlTypes.Char (), new SqlTypes.Char (), new SqlTypes.Char () };
 			var table = new TypedTable (new string[] {"a","b","c"}, types);
 
-			table.Name = PostgresNaming.ToPostgresName("TestTableIsCreated");
+			table.Name = adapter.GetEngineSpecificName("TestTableIsCreated");
 
 			try
 			{
 				var destConfig = new DestinationConfiguration (){ CreateDestinationTable=true};
-				var pgConfig = new PostgresConfiguration () { ConnectionString = connString };
 
-				var pgDestination = new PostgresDestination (destConfig, pgConfig);
+				var pgDestination = new DbDestination (destConfig, dbConfig);
 
 				pgDestination.WriteTable (table);
 
@@ -56,8 +63,7 @@ namespace CsvImporter.Tests
 				conn.Execute ("drop table " + table.Name );
 			}
 		}
-
-		[Test()]
+			
 		public void TestRowsAreAdded ()
 		{
 			var table = new TypedTable (new string[] {"a","b","c"});
@@ -66,14 +72,14 @@ namespace CsvImporter.Tests
 			table.Add (new string[] {"2","2","2"});
 			table.Add (new string[] {"3","3","3"});
 
-			table.Name = PostgresNaming.ToPostgresName("TestRowsAreAdded");
+			table.Name = adapter.GetEngineSpecificName("TestRowsAreAdded");
 
 			try
 			{
 				var destConfig = new DestinationConfiguration (){ CreateDestinationTable=true};
-				var pgConfig = new PostgresConfiguration () { ConnectionString = connString };
 
-				var pgDestination = new PostgresDestination (destConfig, pgConfig);
+
+				var pgDestination = new DbDestination (destConfig, dbConfig);
 
 				pgDestination.WriteTable (table);
 
@@ -87,7 +93,6 @@ namespace CsvImporter.Tests
 			}
 		}
 
-		[Test()]
 		public void TestTruncationWorks ()
 		{
 			var table1 = new TypedTable (new string[] {"a","b","c"});
@@ -96,7 +101,7 @@ namespace CsvImporter.Tests
 			table1.Add (new string[] {"2","2","2"});
 			table1.Add (new string[] {"3","3","3"});
 
-			table1.Name = PostgresNaming.ToPostgresName("TestTruncationWorks");
+			table1.Name = adapter.GetEngineSpecificName("TestTruncationWorks");
 
 			var table2 = new TypedTable (new string[] {"a","b","c"});
 
@@ -108,13 +113,10 @@ namespace CsvImporter.Tests
 
 			try
 			{
-				var pgConfig = new PostgresConfiguration () { ConnectionString = connString };
-
-				// Let's create a table using the normal methods
-
+				// Let's create a table
 				var destConfig1 = new DestinationConfiguration (){ CreateDestinationTable=true};
 
-				var pgDestination1 = new PostgresDestination (destConfig1, pgConfig);
+				var pgDestination1 = new DbDestination (destConfig1, dbConfig);
 
 				pgDestination1.WriteTable (table1);
 
@@ -126,7 +128,7 @@ namespace CsvImporter.Tests
 
 				var destConfig2 = new DestinationConfiguration (){ TruncateDestinationTable=true};
 
-				var pgDestination2 = new PostgresDestination (destConfig2, pgConfig);
+				var pgDestination2 = new DbDestination (destConfig2, dbConfig);
 
 				pgDestination2.WriteTable (table2);
 
@@ -144,39 +146,6 @@ namespace CsvImporter.Tests
 			finally
 			{
 				conn.Execute ("drop table " + table1.Name );
-			}
-		}
-
-		[Test()]
-		public void TestTableIsCreatedWithPostgresNames ()
-		{
-			var types = new SqlType[] { new SqlTypes.Char (), new SqlTypes.Char (), new SqlTypes.Char (), new SqlTypes.Char () };
-			var table = new TypedTable (new string[] {"A","CamelCase","finished_already"}, types);
-
-			table.Name = "TestTableIsCreated";
-
-			var pgName = PostgresNaming.ToPostgresName (table.Name);
-
-			try
-			{
-				var destConfig = new DestinationConfiguration (){ CreateDestinationTable=true};
-				var pgConfig = new PostgresConfiguration () { ConnectionString = connString };
-
-				var pgDestination = new PostgresDestination (destConfig, pgConfig);
-
-				pgDestination.WriteTable (table);
-
-				var result1 = conn.Query("select * from information_schema.tables where table_name = @Name", new {Name=pgName});
-
-				Assert.AreEqual(1, result1.Count());
-
-				var result2 = conn.Query("select * from information_schema.columns where table_name = @Name and column_name in ('a', 'camel_case', 'finished_already')", new {Name=pgName});
-			
-				Assert.AreEqual(3, result2.Count());
-			}
-			finally
-			{
-				conn.Execute ("drop table " + PostgresNaming.ToPostgresName (table.Name) );
 			}
 		}
 	}

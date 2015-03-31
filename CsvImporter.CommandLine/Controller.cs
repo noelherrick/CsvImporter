@@ -23,7 +23,7 @@ namespace CsvImporter.CommandLine
 		/// <summary>
 		/// The type for a function that writes a table. A simple form of dependancy injection.
 		/// </summary>
-		public delegate void WriteTableFunc (DestinationConfiguration destConfig, PostgresConfiguration pgConfig, TypedTable table);
+		public delegate void WriteTableFunc (DestinationConfiguration destConfig, DbConfiguration pgConfig, TypedTable table);
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="CsvImporter.CommandLine.Controller"/> class.
@@ -96,9 +96,6 @@ namespace CsvImporter.CommandLine
 				throw new UserInputException (sb.ToString());
 			}
 				
-			var connString = string.Format ("Server={0};Port={1};Database={2};User Id={3};Password={4};",
-				options.Host, options.Port, options.Database, options.User, options.Password);
-
 			foreach (var file in options.Files)
 			{
 				var csvConfig = new CsvFileConfiguration () { Path = file };
@@ -108,9 +105,9 @@ namespace CsvImporter.CommandLine
 
 				var destConfig = new DestinationConfiguration ()
 				{ TruncateDestinationTable = options.TruncateTable, CreateDestinationTable= options.CreateTable};
-				var pgConfig = new PostgresConfiguration () { ConnectionString = connString };
+				var dbConfig = new DbConfiguration () { Engine = options.Engine, Port = options.Port, Hostname = options.Hostname, Database = options.Database, Username = options.Username, Password = options.Password };
 
-				writeTable (destConfig, pgConfig, table);
+				writeTable (destConfig, dbConfig, table);
 			}
 
 			return "";
@@ -134,9 +131,9 @@ namespace CsvImporter.CommandLine
 		/// <param name="destConfig">Destination config.</param>
 		/// <param name="pgConfig">Postgres-specific config.</param>
 		/// <param name="table">Table to write.</param>
-		public static void WriteTableDefault (DestinationConfiguration destConfig, PostgresConfiguration pgConfig, TypedTable table)
+		public static void WriteTableDefault (DestinationConfiguration destConfig, DbConfiguration pgConfig, TypedTable table)
 		{
-			var dest = new PostgresDestination (destConfig, pgConfig);
+			var dest = new DbDestination (destConfig, pgConfig);
 
 			dest.WriteTable (table);
 		}

@@ -1,2 +1,9 @@
 ﻿TODO
+Add streaming to the project (with configurable batch size)
+Add parallel processing
 
+Ungroomed backlog
+Add sampled type inference
+Resumable loading
+Progress reports
+In-process table alterations (when CreateTable option is true, and column type is not correct)

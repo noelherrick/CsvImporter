@@ -42,10 +42,12 @@
       <HintPath>..\packages\Npgsql.2.2.5\lib\net45\Npgsql.dll</HintPath>
     </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="MySql.Data">
+      <HintPath>..\packages\MySql.Data.6.9.6\lib\net45\MySql.Data.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PostgresDestination.cs" />
     <Compile Include="SqlTypes\SqlType.cs" />
     <Compile Include="SqlTypes\TypeCategory.cs" />
     <Compile Include="SqlTypes\Char.cs" />
@@ -53,14 +55,18 @@
     <Compile Include="SqlTypes\Decimal.cs" />
     <Compile Include="Configuration\DestinationConfiguration.cs" />
     <Compile Include="Configuration\SourceConfiguration.cs" />
-    <Compile Include="Configuration\PostgresConfiguration.cs" />
-    <Compile Include="CsvSource.cs" />
     <Compile Include="Configuration\CsvFileConfiguration.cs" />
     <Compile Include="Helpers\Zipper.cs" />
     <Compile Include="TypedTable.cs" />
-    <Compile Include="Helpers\PostgresNaming.cs" />
-    <Compile Include="Helpers\PostgresTypedTableExtensions.cs" />
     <Compile Include="SqlTypes\TimeTypes.cs" />
+    <Compile Include="Configuration\DbConfiguration.cs" />
+    <Compile Include="Source\CsvSource.cs" />
+    <Compile Include="Destination\DbAdapter.cs" />
+    <Compile Include="Destination\DbAdapterFactory.cs" />
+    <Compile Include="Destination\DbDestination.cs" />
+    <Compile Include="Destination\IDbAdapter.cs" />
+    <Compile Include="Destination\PostgresAdapter.cs" />
+    <Compile Include="Destination\MySqlAdapter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -69,11 +75,14 @@
     <None Include="LICENSE" />
     <None Include="COPYRIGHT" />
     <None Include="TODO" />
+    <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="SqlTypes\" />
     <Folder Include="Configuration\" />
     <Folder Include="Helpers\" />
+    <Folder Include="Destination\" />
+    <Folder Include="Source\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SimpleTable\SimpleTable.csproj">

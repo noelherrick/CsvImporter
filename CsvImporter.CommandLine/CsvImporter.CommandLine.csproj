@@ -37,6 +37,9 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="Npgsql" />
+    <Reference Include="MySql.Data">
+      <HintPath>..\packages\MySql.Data.6.9.6\lib\net45\MySql.Data.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
@@ -51,6 +54,7 @@
     <None Include="LICENSE" />
     <None Include="README.md" />
     <None Include="COPYRIGHT" />
+    <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CsvImporter\CsvImporter.csproj">
