@@ -75,7 +75,6 @@
     <None Include="LICENSE" />
     <None Include="COPYRIGHT" />
     <None Include="TODO" />
-    <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="SqlTypes\" />

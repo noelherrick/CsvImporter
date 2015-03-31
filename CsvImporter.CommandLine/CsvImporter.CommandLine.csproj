@@ -54,7 +54,6 @@
     <None Include="LICENSE" />
     <None Include="README.md" />
     <None Include="COPYRIGHT" />
-    <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CsvImporter\CsvImporter.csproj">
