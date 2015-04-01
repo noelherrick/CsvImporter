@@ -3,6 +3,7 @@ using CommandLineLib = CommandLine;
 using System.IO;
 using System.Text;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace CsvImporter.CommandLine
 {
@@ -95,11 +96,30 @@ namespace CsvImporter.CommandLine
 
 				throw new UserInputException (sb.ToString());
 			}
-				
+
+			var defaultTableNames = true;
+			var index = 0;
+
+			if (options.Names != null && options.Names.Count != 0)
+			{
+				if (options.Names.Count != options.Files.Count) {
+					throw new UserInputException ("You must specifiy the same number of table names as files.");
+				}
+
+				defaultTableNames = false;
+			}
+
 			foreach (var file in options.Files)
 			{
+				string tableName = null;
+
+				if (!defaultTableNames)
+				{
+					tableName = options.Names[index++];
+				}
+
 				var csvConfig = new CsvFileConfiguration () { Path = file };
-				var srcConfig = new SourceConfiguration () { HasHeaders = options.HasHeaders };
+				var srcConfig = new SourceConfiguration () { Name = tableName, HasHeaders = options.HasHeaders };
 
 				var table = readTable (srcConfig, csvConfig);
 

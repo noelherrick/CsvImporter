@@ -63,6 +63,14 @@ namespace CsvImporter.CommandLine
 		public string Engine { get; set; }
 
 		/// <summary>
+		/// Gets or sets the names of the tables to use at the destination database.
+		/// </summary>
+		/// <value>The names.</value>
+		[CommandLineLib.OptionList('n', "names",
+			HelpText = "The names of the tables to use at the destination database.")]
+		public IList<string> Names { get; set; }
+
+		/// <summary>
 		/// Gets or sets a value tell the command line program to print verbose logging
 		/// </summary>
 		/// <value><c>true</c> if verbose; otherwise, <c>false</c>.</value>

@@ -4,13 +4,25 @@ CsvImporter
 
 CsvImporter is a command line tool that takes a CSV file and imports it into a SQL database.
 
-Currently, it is only available for Postgres, but I plan to make it work for SQL Server & MySQL.
+Currently, it is only available for Postgres and MySQL, but I plan to make it work for SQL Server.
 
 Using the SSIS functionality in SSMS, one can easily import a CSV into SQL Server. Doing so with other RDBMSes is a pain, so I created this project.
 
+## Features
+
+- Imports CSV into RDBMes
+- Creates the table at the destination if desired
+- Truncates table at the destination if desired
+- Infers types
+- Works with Postgres and MySQL
+- Cross-platform (using .NET/Mono)
+
 ## Example
 
-    csv-importer.exe -h 127.0.0.1 -p 5432 -d csv_importer -u csv_importer -W csv_importer -e postgres -f test1.csv -t -H
+This imports a file called test1.csv to a localhost server. It will create the destination table (-c) and it will use the first row as the header names (-H).
+
+    csv-importer.exe -d csv_importer -u csv_importer -W csv_importer \
+    -e postgres -f test1.csv -c -H
 
 ## Parts
 
