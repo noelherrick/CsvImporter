@@ -14,10 +14,10 @@ namespace CsvImporter
 			return new MySqlConnection (GetConnectionString(dbConfig));
 		}
 
-		public new string GenerateDdl (TypedTable table) {
-			string colList = string.Join (",", table.Headers.ToList().Select (x => EscapeName(x.Name) + " " + GetTypeName(x.Type)));
+		public new string GenerateDdl (IRowStream stream) {
+			string colList = string.Join (",", stream.Headers.ToList().Select (x => EscapeName(x.Name) + " " + GetTypeName(x.Type)));
 
-			return string.Format ("create table {0} ({1}) character set utf8 collate utf8_general_ci", EscapeName(table.Name), colList);
+			return string.Format ("create table {0} ({1}) character set utf8 collate utf8_general_ci", EscapeName(stream.Name), colList);
 		}
 
 		public string GetConnectionString (DbConfiguration dbConfig)

@@ -19,6 +19,8 @@ namespace CsvImporter
 		/// </summary>
 		/// <value>The name.</value>
         public string Name { get; set;}
+
+		public int BufferSize { get;set;}
     }
 }
 

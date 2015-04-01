@@ -19,12 +19,12 @@ namespace CsvImporter.CommandLine
 		/// <summary>
 		/// The type for a function that reads a table. A simple form of dependancy injection.
 		/// </summary>
-		public delegate TypedTable ReadTableFunc (SourceConfiguration srcConfig, CsvFileConfiguration csvConfig);
+		public delegate IRowStream ReadTableFunc (SourceConfiguration srcConfig, CsvFileConfiguration csvConfig);
 
 		/// <summary>
 		/// The type for a function that writes a table. A simple form of dependancy injection.
 		/// </summary>
-		public delegate void WriteTableFunc (DestinationConfiguration destConfig, DbConfiguration pgConfig, TypedTable table);
+		public delegate void WriteTableFunc (DestinationConfiguration destConfig, DbConfiguration pgConfig, IRowStream stream);
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="CsvImporter.CommandLine.Controller"/> class.
@@ -119,15 +119,15 @@ namespace CsvImporter.CommandLine
 				}
 
 				var csvConfig = new CsvFileConfiguration () { Path = file };
-				var srcConfig = new SourceConfiguration () { Name = tableName, HasHeaders = options.HasHeaders };
+				var srcConfig = new SourceConfiguration () { Name = tableName, HasHeaders = options.HasHeaders, BufferSize = options.BufferSize };
 
-				var table = readTable (srcConfig, csvConfig);
+				var stream = readTable (srcConfig, csvConfig);
 
 				var destConfig = new DestinationConfiguration ()
 				{ TruncateDestinationTable = options.TruncateTable, CreateDestinationTable= options.CreateTable};
 				var dbConfig = new DbConfiguration () { Engine = options.Engine, Port = options.Port, Hostname = options.Hostname, Database = options.Database, Username = options.Username, Password = options.Password };
 
-				writeTable (destConfig, dbConfig, table);
+				writeTable (destConfig, dbConfig, stream);
 			}
 
 			return "";
@@ -139,10 +139,10 @@ namespace CsvImporter.CommandLine
 		/// <returns>The table that was read in.</returns>
 		/// <param name="srcConfig">Source config.</param>
 		/// <param name="csvConfig">Csv config.</param>
-		public static TypedTable ReadTableDefault (SourceConfiguration srcConfig, CsvFileConfiguration csvConfig)
+		public static IRowStream ReadTableDefault (SourceConfiguration srcConfig, CsvFileConfiguration csvConfig)
 		{
-			var src = new CsvFileSource (csvConfig, srcConfig);
-			return src.ReadTable ();
+			var csvSrc = new CsvFileStreamSource (csvConfig, srcConfig);
+			return new RowStream (csvSrc, srcConfig.BufferSize);
 		}
 
 		/// <summary>
@@ -151,11 +151,11 @@ namespace CsvImporter.CommandLine
 		/// <param name="destConfig">Destination config.</param>
 		/// <param name="pgConfig">Postgres-specific config.</param>
 		/// <param name="table">Table to write.</param>
-		public static void WriteTableDefault (DestinationConfiguration destConfig, DbConfiguration pgConfig, TypedTable table)
+		public static void WriteTableDefault (DestinationConfiguration destConfig, DbConfiguration pgConfig, IRowStream stream)
 		{
 			var dest = new DbDestination (destConfig, pgConfig);
 
-			dest.WriteTable (table);
+			dest.WriteStream (stream);
 		}
 	}
 }

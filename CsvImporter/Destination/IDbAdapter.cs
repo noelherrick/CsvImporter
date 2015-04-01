@@ -7,10 +7,9 @@ namespace CsvImporter
 	public interface IDbAdapter
 	{
 		DbConnection GetConnection (DbConfiguration dbConfig);
-		string GenerateTruncateStatement (TypedTable table);
-		string GenerateDdl (TypedTable table);
-		string GenerateInsertSql (TypedTable table);
-		TypedTable ConvertTable (TypedTable table);
+		string GenerateTruncateStatement (IRowStream stream);
+		string GenerateDdl (IRowStream stream);
+		string GenerateInsertSql (IRowStream stream);
 		string GetEngineSpecificName (string name);
 	}
 }

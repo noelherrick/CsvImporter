@@ -33,10 +33,10 @@ namespace CsvImporter
 		/// <param name="srcConfig">Source config.</param>
         public CsvFileSource (CsvFileConfiguration fileConfig, SourceConfiguration srcConfig)
         {
-            // If a name wasn't passed in, use the filename without extension
-            if (srcConfig.Name == null) {
-                srcConfig.Name = System.IO.Path.GetFileNameWithoutExtension (fileConfig.Path);
-            }
+			// If a name wasn't passed in, use the filename without extension
+			if (srcConfig.Name == null) {
+				srcConfig.Name = System.IO.Path.GetFileNameWithoutExtension (fileConfig.Path);
+			}
 
             this.fileConfig = fileConfig;
             this.srcConfig = srcConfig;

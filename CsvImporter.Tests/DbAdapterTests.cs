@@ -6,6 +6,7 @@ using Dapper;
 using System.Configuration;
 using System.Data.Common;
 using NUnit.Framework;
+using System.Collections.Generic;
 
 namespace CsvImporter.Tests
 {
@@ -42,9 +43,7 @@ namespace CsvImporter.Tests
 		public void TestTableIsCreated ()
 		{
 			var types = new SqlType[] { new SqlTypes.Char (), new SqlTypes.Char (), new SqlTypes.Char (), new SqlTypes.Char () };
-			var table = new TypedTable (new string[] {"a","b","c"}, types);
-
-			table.Name = adapter.GetEngineSpecificName("TestTableIsCreated");
+			var stream = new MemoryRowStream (adapter.GetEngineSpecificName("TestTableIsCreated"), new string[] {"a","b","c"}, types);
 
 			try
 			{
@@ -52,27 +51,28 @@ namespace CsvImporter.Tests
 
 				var pgDestination = new DbDestination (destConfig, dbConfig);
 
-				pgDestination.WriteTable (table);
+				pgDestination.WriteStream(stream);
 
-				var result = conn.Query("select * from information_schema.tables where table_name = @Name", new {Name=table.Name});
+				var result = conn.Query("select * from information_schema.tables where table_name = @Name", new {Name=stream.Name});
 
 				Assert.AreEqual(1, result.Count());
 			}
 			finally
 			{
-				conn.Execute ("drop table " + table.Name );
+				conn.Execute ("drop table " + stream.Name );
 			}
 		}
 			
 		public void TestRowsAreAdded ()
 		{
-			var table = new TypedTable (new string[] {"a","b","c"});
+			var rows = new List<string[]> ();
 
-			table.Add (new string[] {"1","1","1"});
-			table.Add (new string[] {"2","2","2"});
-			table.Add (new string[] {"3","3","3"});
+			rows.Add (new string[] {"1","1","1"});
+			rows.Add (new string[] {"2","2","2"});
+			rows.Add (new string[] {"3","3","3"});
 
-			table.Name = adapter.GetEngineSpecificName("TestRowsAreAdded");
+			var source = new MemoryStreamSource(adapter.GetEngineSpecificName("TestRowsAreAdded"), new string[] {"a","b","c"}, rows.ToArray());
+			var stream = new RowStream (source);
 
 			try
 			{
@@ -81,35 +81,39 @@ namespace CsvImporter.Tests
 
 				var pgDestination = new DbDestination (destConfig, dbConfig);
 
-				pgDestination.WriteTable (table);
+				pgDestination.WriteStream (stream);
 
-				var result = conn.Query<int>("select count(*) as a from " + table.Name).First();
+				var result = conn.Query<int>("select count(*) as a from " + stream.Name).First();
 
 				Assert.AreEqual(3, result);
 			}
 			finally
 			{
-				conn.Execute ("drop table " + table.Name );
+				conn.Execute ("drop table " + stream.Name );
 			}
 		}
 
 		public void TestTruncationWorks ()
 		{
-			var table1 = new TypedTable (new string[] {"a","b","c"});
+			var name = "test_truncation_works";
 
-			table1.Add (new string[] {"1","1","1"});
-			table1.Add (new string[] {"2","2","2"});
-			table1.Add (new string[] {"3","3","3"});
+			var rows1 = new List<string[]> ();
 
-			table1.Name = adapter.GetEngineSpecificName("TestTruncationWorks");
+			rows1.Add (new string[] {"1","1","1"});
+			rows1.Add (new string[] {"2","2","2"});
+			rows1.Add (new string[] {"3","3","3"});
 
-			var table2 = new TypedTable (new string[] {"a","b","c"});
+			var source1 = new MemoryStreamSource(name, new string[] {"a","b","c"}, rows1.ToArray());
+			var stream1 = new RowStream (source1, 1); // We want to trigger the batch logic
 
-			table2.Add (new string[] {"4","4","4"});
-			table2.Add (new string[] {"5","5","5"});
-			table2.Add (new string[] {"6","6","6"});
+			var rows2 = new List<string[]> ();
 
-			table2.Name = table1.Name;
+			rows2.Add (new string[] {"4","4","4"});
+			rows2.Add (new string[] {"5","5","5"});
+			rows2.Add (new string[] {"6","6","6"});
+
+			var source2 = new MemoryStreamSource(name, new string[] {"a","b","c"}, rows2.ToArray());
+			var stream2 = new RowStream (source2, 1);
 
 			try
 			{
@@ -118,9 +122,9 @@ namespace CsvImporter.Tests
 
 				var pgDestination1 = new DbDestination (destConfig1, dbConfig);
 
-				pgDestination1.WriteTable (table1);
+				pgDestination1.WriteStream (stream1);
 
-				var result1 = conn.Query<int>("select count(*) as a from " + table1.Name + " where a in (1,2,3)").First();
+				var result1 = conn.Query<int>("select count(*) as a from " + stream1.Name + " where a in (1,2,3)").First();
 
 				Assert.AreEqual(3, result1);
 
@@ -130,22 +134,22 @@ namespace CsvImporter.Tests
 
 				var pgDestination2 = new DbDestination (destConfig2, dbConfig);
 
-				pgDestination2.WriteTable (table2);
+				pgDestination2.WriteStream (stream2);
 
 				// We don't want any old rows
-				var result2 = conn.Query<int>("select count(*) as a from " + table1.Name + " where a in (1,2,3)").First();
+				var result2 = conn.Query<int>("select count(*) as a from " + stream1.Name + " where a in (1,2,3)").First();
 
 				Assert.AreEqual(0, result2);
 
 				// We do want the new rows
 
-				var result3 = conn.Query<int>("select count(*) as a from " + table1.Name + " where a in (4,5,6)").First();
+				var result3 = conn.Query<int>("select count(*) as a from " + stream1.Name + " where a in (4,5,6)").First();
 
 				Assert.AreEqual(3, result3);
 			}
 			finally
 			{
-				conn.Execute ("drop table " + table1.Name );
+				conn.Execute ("drop table " + stream1.Name );
 			}
 		}
 	}

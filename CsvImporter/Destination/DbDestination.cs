@@ -27,18 +27,16 @@ namespace CsvImporter
 		/// Writes the table to the destination database. It will also create or truncate the table.
 		/// </summary>
 		/// <param name="table">Table.</param>
-        public void WriteTable (TypedTable table)
+		public void WriteStream (IRowStream stream)
         {
 			var dbAdapter = DbAdapterFactory.GetDbAdapter (dbConfig.Engine);
-
-			table = dbAdapter.ConvertTable (table);
 
 			using (var conn = dbAdapter.GetConnection(dbConfig)) {
                 conn.Open ();
 
                 if (config.CreateDestinationTable)
                 {
-					var ddlSql = dbAdapter.GenerateDdl (table);
+					var ddlSql = dbAdapter.GenerateDdl (stream);
                     //Console.WriteLine(sqlDdl);
 
 					var createCmd = conn.CreateCommand ();
@@ -48,7 +46,7 @@ namespace CsvImporter
                 }
                 else if (config.TruncateDestinationTable)
                 {
-					var truncateSql = dbAdapter.GenerateTruncateStatement(table);
+					var truncateSql = dbAdapter.GenerateTruncateStatement(stream);
 
                     //Console.WriteLine(truncateSql);
 
@@ -58,9 +56,9 @@ namespace CsvImporter
                     truncateCmd.ExecuteScalar ();
                 }
 
-				var insertSql = dbAdapter.GenerateInsertSql (table);
+				var insertSql = dbAdapter.GenerateInsertSql (stream);
 
-                foreach (var row in table)
+				foreach (var row in stream.GetRowEnumerable())
                 {
 					var cmd = conn.CreateCommand ();
 					cmd.CommandText = insertSql;

@@ -1,6 +1,7 @@
 ﻿using System;
 using NUnit.Framework;
 using CsvImporter;
+using CsvImporter.SqlTypes;
 using CsvImporter.CommandLine;
 using System.IO;
 using System.Linq;
@@ -13,13 +14,13 @@ namespace CsvImporter.CommandLine.Tests
 	{
 		private TextWriter outWriter;
 
-		private void noOpWriteTable (DestinationConfiguration destConfig, DbConfiguration pgConfig, TypedTable table)
+		private void noOpWriteTable (DestinationConfiguration destConfig, DbConfiguration pgConfig, IRowStream stream)
 		{
 		}
 
-		private TypedTable readEmptyTable (SourceConfiguration sourceConfig, CsvFileConfiguration fileConfig)
+		private IRowStream readEmptyTable (SourceConfiguration sourceConfig, CsvFileConfiguration fileConfig)
 		{
-			return new TypedTable (new string[0]);
+			return new MemoryRowStream ("", new string[0], new SqlType[0]);
 		}
 
 		private IList<string> getDummyArgs () {
@@ -66,7 +67,7 @@ namespace CsvImporter.CommandLine.Tests
 
 			argList.Add ("-H");
 
-			var controller = new Controller (outWriter, (Controller.ReadTableFunc)((x,y) => {Assert.AreEqual(true, x.HasHeaders); return new TypedTable (new string[0]); }), noOpWriteTable);
+			var controller = new Controller (outWriter, (Controller.ReadTableFunc)((x,y) => {Assert.AreEqual(true, x.HasHeaders); return readEmptyTable(x,y); }), noOpWriteTable);
 
 			controller.Run (argList.ToArray());
 			Assert.AreEqual("", outWriter.ToString());
@@ -77,7 +78,7 @@ namespace CsvImporter.CommandLine.Tests
 		{
 			var argList = getDummyArgs ();
 
-			var controller = new Controller (outWriter, (Controller.ReadTableFunc)((x,y) => {Assert.AreEqual("dummy", y.Path); return new TypedTable (new string[0]); }), noOpWriteTable);
+			var controller = new Controller (outWriter, (Controller.ReadTableFunc)((x,y) => {Assert.AreEqual("dummy", y.Path); return readEmptyTable(x,y); }), noOpWriteTable);
 
 			controller.Run (argList.ToArray());
 			Assert.AreEqual("", outWriter.ToString());

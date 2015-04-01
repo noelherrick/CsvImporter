@@ -64,20 +64,17 @@ namespace CsvImporter.Tests
 		public void TestTableIsCreatedWithPostgresNames ()
 		{
 			var types = new SqlType[] { new SqlTypes.Char (), new SqlTypes.Char (), new SqlTypes.Char (), new SqlTypes.Char () };
-			var table = new TypedTable (new string[] {"A","CamelCase","finished_already"}, types);
+			var stream = new MemoryRowStream ( "TestTableIsCreatedWithPostgresNames", new string[] {"A","CamelCase","finished_already"}, types);
 
-			table.Name = "TestTableIsCreatedWithPostgresNames";
-
-			var pgName = pgAdapter.GetEngineSpecificName (table.Name);
+			var pgName = pgAdapter.GetEngineSpecificName (stream.Name);
 
 			try
 			{
 				var destConfig = new DestinationConfiguration (){ CreateDestinationTable=true};
 
-
 				var pgDestination = new DbDestination (destConfig, dbConfig);
 
-				pgDestination.WriteTable (table);
+				pgDestination.WriteStream (stream);
 
 				var result1 = conn.Query("select * from information_schema.tables where table_name = @Name", new {Name=pgName});
 
@@ -89,7 +86,7 @@ namespace CsvImporter.Tests
 			}
 			finally
 			{
-				conn.Execute ("drop table " + pgAdapter.GetEngineSpecificName(table.Name) );
+				conn.Execute ("drop table " + pgAdapter.GetEngineSpecificName(stream.Name) );
 			}
 		}
 	}

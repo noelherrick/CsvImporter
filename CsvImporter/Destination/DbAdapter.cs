@@ -8,36 +8,23 @@ namespace CsvImporter
 	{
 		public abstract DbConnection GetConnection (DbConfiguration dbConfig);
 
-		public string GenerateTruncateStatement (TypedTable table)
+		public string GenerateTruncateStatement (IRowStream stream)
 		{
-			return string.Format ("truncate table {0};", EscapeName(table.Name));
+			return string.Format ("truncate table {0};", EscapeName(GetEngineSpecificName(stream.Name)));
 		}
 
-		public string GenerateDdl (TypedTable table) {
-			string colList = string.Join (",", table.Headers.ToList().Select (x => EscapeName(x.Name) + " " + GetTypeName(x.Type)));
+		public string GenerateDdl (IRowStream stream) {
+			string colList = string.Join (",", stream.Headers.Select (x => EscapeName(GetEngineSpecificName(x.Name)) + " " + GetTypeName(x.Type)));
 
-			return string.Format ("create table {0} ({1})", EscapeName(table.Name), colList);
+			return string.Format ("create table {0} ({1})", EscapeName(GetEngineSpecificName(stream.Name)), colList);
 		}
 
-		public string GenerateInsertSql (TypedTable table)
+		public string GenerateInsertSql (IRowStream stream)
 		{
-			string colList = string.Join (",", table.Headers.ToList().Select (x => EscapeName(x.Name)));
-			string paramList = string.Join (",", table.Headers.ToList().Select (x => "@" + x.Index));
+			string colList = string.Join (",", stream.Headers.Select(x => GetEngineSpecificName(x.Name)).Select (x => EscapeName(x)));
+			string paramList = string.Join (",", stream.Headers.Select (x => "@" + x.Index));
 
-			return string.Format ("insert into {0} ({1}) values ({2})", EscapeName(table.Name), colList, paramList);
-		}
-
-		public TypedTable ConvertTable (TypedTable table)
-		{
-			var convertedColumnNames = table.ColumnNames.Select (x => GetEngineSpecificName(x)).ToArray();
-			var convertedColumnTypes = table.DataTypes.ToArray();
-			var convertedTable = new TypedTable (convertedColumnNames, convertedColumnTypes);
-
-			convertedTable.Name = GetEngineSpecificName(table.Name);
-
-			convertedTable.AddRange (table);
-
-			return convertedTable;
+			return string.Format ("insert into {0} ({1}) values ({2})", EscapeName(GetEngineSpecificName(stream.Name)), colList, paramList);
 		}
 
 		public abstract string GetTypeName (CsvImporter.SqlTypes.SqlType type);

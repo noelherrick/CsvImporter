@@ -115,8 +115,16 @@ namespace CsvImporter.CommandLine
 		/// </summary>
 		/// <value><c>true</c> if  to print the version and exit; otherwise, <c>false</c>.</value>
 		[CommandLineLib.Option('V', "version", DefaultValue = false,
-			HelpText = "Whether to create the table first.")]
+			HelpText = "Displays the version number of the program.")]
 		public bool Version { get; set; }
+
+		/// <summary>
+		/// Gets or sets size of the row buffer.
+		/// </summary>
+		/// <value>The host.</value>
+		[CommandLineLib.Option('b', "bufferSize", DefaultValue = 10000,
+			HelpText = "The size of the row buffer.")]
+		public int BufferSize { get; set; }
 
 		/// <summary>
 		/// Gets or sets the last state of the CommandLine parser.

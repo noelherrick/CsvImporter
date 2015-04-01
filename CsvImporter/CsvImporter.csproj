@@ -67,6 +67,13 @@
     <Compile Include="Destination\IDbAdapter.cs" />
     <Compile Include="Destination\PostgresAdapter.cs" />
     <Compile Include="Destination\MySqlAdapter.cs" />
+    <Compile Include="Source\CsvStreamSource.cs" />
+    <Compile Include="Header.cs" />
+    <Compile Include="Source\MemoryRowStream.cs" />
+    <Compile Include="Source\MemoryStreamSource.cs" />
+    <Compile Include="Source\RowStream.cs" />
+    <Compile Include="Source\IStreamSource.cs" />
+    <Compile Include="Helpers\TypeInferer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
